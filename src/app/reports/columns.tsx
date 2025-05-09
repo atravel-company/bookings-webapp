@@ -1,6 +1,7 @@
+import { BookingReport } from "@/types/Bookings/BookingReport";
 import { ColumnDef } from "@tanstack/react-table";
 
-export const columns: ColumnDef<Report>[] = [
+export const columns: ColumnDef<BookingReport>[] = [
   {
     accessorKey: "startDate",
     header: "Start Date",

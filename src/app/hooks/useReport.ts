@@ -1,16 +1,16 @@
 import { useState, useEffect } from "react";
-import { Report } from "@/types/Report";
+import { BookingReport } from "@/types/Bookings/BookingReport";
 
 const endpoint = `${process.env.NEXT_PUBLIC_BOOKINGS_API_URL}/reports`;
 
-interface UseReportResult {
-  report: Report | null;
+interface UseBookingReportResult {
+  report: BookingReport[] | null;
   loading: boolean;
   error: string | null;
 }
 
-export function useReport(): UseReportResult {
-  const [report, setReport] = useState<Report | null>(null);
+export function useReport(): UseBookingReportResult {
+  const [report, setReport] = useState<BookingReport[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -19,7 +19,7 @@ export function useReport(): UseReportResult {
       try {
         const res = await fetch(endpoint);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data: Report = await res.json();
+        const data: BookingReport[] = await res.json();
         setReport(data);
       } catch (err: unknown) {
         if (err instanceof Error) {

@@ -1,6 +1,6 @@
-import { BookingsCollection } from "./Bookings/BookingsCollection";
+import { BookingsCollection } from "./BookingsCollection";
 
-export interface Report {
+export interface BookingReport {
   id: number;
   clientName: string;
   operatorName: string;

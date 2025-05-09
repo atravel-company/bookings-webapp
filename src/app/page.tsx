@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useReport } from "./hooks/useReport";
 import { columns } from "./reports/columns";
 import { DataTable } from "@/components/ui/data-table";
