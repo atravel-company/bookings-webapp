@@ -1,17 +1,14 @@
 import { BookingReport } from "@/types/Bookings/BookingReport";
 import { ColumnDef } from "@tanstack/react-table";
+import { parseISO, format } from "date-fns";
 
 export const columns: ColumnDef<BookingReport>[] = [
   {
     accessorKey: "startDate",
     header: "Start Date",
     cell: ({ getValue }) => {
-      const date = new Date(getValue() as string);
-      return date.toLocaleDateString("pt-PT", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      });
+      const date = parseISO(getValue() as string);
+      return format(date, "dd/MM/yyyy");
     },
   },
   {
