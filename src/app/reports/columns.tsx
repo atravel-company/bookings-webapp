@@ -1,4 +1,4 @@
-import { BookingReport } from "@/types/Bookings/BookingReport";
+import { BookingReport } from "@/types/BookingReport";
 import { ColumnDef } from "@tanstack/react-table";
 import { parseISO, format } from "date-fns";
 

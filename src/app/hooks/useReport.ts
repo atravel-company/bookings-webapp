@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { BookingReport } from "@/types/Bookings/BookingReport";
+import { BookingReport } from "@/types/BookingReport";
 
 const endpoint = `${process.env.NEXT_PUBLIC_BOOKINGS_API_URL}/reports`;
 
