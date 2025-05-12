@@ -20,7 +20,7 @@ export const columns: ColumnDef<BookingReport>[] = [
     header: "Operator",
   },
   {
-    accessorKey: "bookings.metrics.rnts",
+    accessorKey: "metrics.rnts",
     header: "RNTs",
     cell: ({ getValue }) => {
       const value = getValue() as number;
@@ -32,7 +32,7 @@ export const columns: ColumnDef<BookingReport>[] = [
     },
   },
   {
-    accessorKey: "bookings.metrics.bednight",
+    accessorKey: "metrics.bednight",
     header: "Bednights",
     cell: ({ getValue }) => {
       const value = getValue() as number;
@@ -44,7 +44,7 @@ export const columns: ColumnDef<BookingReport>[] = [
     },
   },
   {
-    accessorKey: "bookings.metrics.players",
+    accessorKey: "metrics.players",
     header: "Players",
     cell: ({ getValue }) => {
       const value = getValue() as number;
@@ -56,7 +56,7 @@ export const columns: ColumnDef<BookingReport>[] = [
     },
   },
   {
-    accessorKey: "bookings.metrics.adr",
+    accessorKey: "metrics.adr",
     header: "ADR",
     cell: ({ getValue }) => {
       const value = getValue() as number;
@@ -69,51 +69,55 @@ export const columns: ColumnDef<BookingReport>[] = [
     },
   },
   {
-    accessorKey: "bookings.totals.quarto",
+    accessorKey: "totals.quarto",
     header: "Quarto",
     cell: ({ getValue }) => {
-      const value = getValue() as number;
-      return value.toLocaleString("pt-PT", {
+      const value = getValue();
+      if (typeof value === "number") return value.toLocaleString("pt-PT", {
         style: "currency",
         currency: "EUR",
       });
+      return "n/a"
     },
   },
   {
-    accessorKey: "bookings.totals.golf",
+    accessorKey: "totals.golf",
     header: "Golf",
     cell: ({ getValue }) => {
-      const value = getValue() as number;
-      return value.toLocaleString("pt-PT", {
+      const value = getValue();
+      if (typeof value === "number") return value.toLocaleString("pt-PT", {
         style: "currency",
         currency: "EUR",
       });
+      return "n/a"
     },
   },
   {
-    accessorKey: "bookings.totals.transfer",
+    accessorKey: "totals.transfer",
     header: "Transfer",
     cell: ({ getValue }) => {
-      const value = getValue() as number;
-      return value.toLocaleString("pt-PT", {
+      const value = getValue();
+      if (typeof value === "number") return value.toLocaleString("pt-PT", {
         style: "currency",
         currency: "EUR",
       });
+      return "n/a"
     },
   },
   {
-    accessorKey: "bookings.totals.extras",
+    accessorKey: "totals.extras",
     header: "Extras",
     cell: ({ getValue }) => {
-      const value = getValue() as number;
-      return value.toLocaleString("pt-PT", {
+      const value = getValue();
+      if (typeof value === "number") return value.toLocaleString("pt-PT", {
         style: "currency",
         currency: "EUR",
       });
+      return "n/a"
     },
   },
   {
-    accessorKey: "bookings.totals.kickback",
+    accessorKey: "totals.kickback",
     header: "Kickback",
     cell: ({ getValue }) => {
       const value = getValue() as number;
@@ -124,7 +128,7 @@ export const columns: ColumnDef<BookingReport>[] = [
     },
   },
   {
-    accessorKey: "bookings.totals.sum",
+    accessorKey: "totals.sum",
     header: "Total",
     cell: ({ getValue }) => {
       const value = getValue() as number;
