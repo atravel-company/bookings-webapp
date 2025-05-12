@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { useReport } from "./hooks/useReport";
 import { columns } from "./reports/columns";
 import { DataTable } from "@/components/ui/data-table";
-import { LoadingScreen } from "@/pages/loading-screen";
+import LoadingScreen from "@/pages/loading-screen";
 import { Button } from "@/components/ui/button";
 import { ClockPlus } from "lucide-react";
 import { DatePicker, DateRangePicker } from "@/components/date-picker";
