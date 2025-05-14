@@ -32,6 +32,7 @@ export default function FiltersAndOptions({
           <DropdownMenuItem>Link</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      {/* --- Columns toggling --- */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="ml-auto">
