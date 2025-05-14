@@ -1,8 +1,27 @@
+import { Button } from "@/components/ui/button";
 import { BookingReport } from "@/types/BookingReport";
 import { ColumnDef } from "@tanstack/react-table";
 import { parseISO, format } from "date-fns";
+import { ChevronDown } from "lucide-react";
 
 export const columns: ColumnDef<BookingReport>[] = [
+  {
+    accessorKey: "expand",
+    header: "",
+    cell: ({ row }) => {
+      return (
+        row.getCanExpand() && (
+          <Button
+            size={"icon"}
+            variant={"ghost"}
+            onClick={() => row.toggleExpanded()}
+          >
+            <ChevronDown />
+          </Button>
+        )
+      );
+    },
+  },
   {
     accessorKey: "startDate",
     header: "Start Date",
@@ -18,6 +37,10 @@ export const columns: ColumnDef<BookingReport>[] = [
   {
     accessorKey: "operatorName",
     header: "Operator",
+  },
+  {
+    accessorKey: "supplierName",
+    header: "Supplier",
   },
   {
     accessorKey: "metrics.rnts",
@@ -73,11 +96,12 @@ export const columns: ColumnDef<BookingReport>[] = [
     header: "Quarto",
     cell: ({ getValue }) => {
       const value = getValue();
-      if (typeof value === "number") return value.toLocaleString("pt-PT", {
-        style: "currency",
-        currency: "EUR",
-      });
-      return "n/a"
+      if (typeof value === "number")
+        return value.toLocaleString("pt-PT", {
+          style: "currency",
+          currency: "EUR",
+        });
+      return "n/a";
     },
   },
   {
@@ -85,11 +109,12 @@ export const columns: ColumnDef<BookingReport>[] = [
     header: "Golf",
     cell: ({ getValue }) => {
       const value = getValue();
-      if (typeof value === "number") return value.toLocaleString("pt-PT", {
-        style: "currency",
-        currency: "EUR",
-      });
-      return "n/a"
+      if (typeof value === "number")
+        return value.toLocaleString("pt-PT", {
+          style: "currency",
+          currency: "EUR",
+        });
+      return "n/a";
     },
   },
   {
@@ -97,11 +122,12 @@ export const columns: ColumnDef<BookingReport>[] = [
     header: "Transfer",
     cell: ({ getValue }) => {
       const value = getValue();
-      if (typeof value === "number") return value.toLocaleString("pt-PT", {
-        style: "currency",
-        currency: "EUR",
-      });
-      return "n/a"
+      if (typeof value === "number")
+        return value.toLocaleString("pt-PT", {
+          style: "currency",
+          currency: "EUR",
+        });
+      return "n/a";
     },
   },
   {
@@ -109,11 +135,12 @@ export const columns: ColumnDef<BookingReport>[] = [
     header: "Extras",
     cell: ({ getValue }) => {
       const value = getValue();
-      if (typeof value === "number") return value.toLocaleString("pt-PT", {
-        style: "currency",
-        currency: "EUR",
-      });
-      return "n/a"
+      if (typeof value === "number")
+        return value.toLocaleString("pt-PT", {
+          style: "currency",
+          currency: "EUR",
+        });
+      return "n/a";
     },
   },
   {

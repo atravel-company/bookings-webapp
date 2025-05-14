@@ -1,13 +1,13 @@
 export interface BookingReport {
   id: number;
-  parentId?: number;
   type?: "quarto" | "golf" | "transfer";
-  supplier?: string;
   clientName: string;
   operatorName: string;
+  supplierName?: string;
   startDate: string; // ISO date string, e.g. "2025-05-09"
   totals: Totals;
   metrics: Metrics;
+  children?: BookingReport[];
 }
 
 export interface Totals {

@@ -6,6 +6,7 @@ import {
   getCoreRowModel,
   VisibilityState,
   useReactTable,
+  getExpandedRowModel,
 } from "@tanstack/react-table";
 
 import {
@@ -25,23 +26,27 @@ import {
 } from "@/components/ui/dropdown-menu";
 import React from "react";
 import { Button } from "./button";
+import { BookingReport } from "@/types/BookingReport";
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+interface BookingsTableProps<TValue> {
+  columns: ColumnDef<BookingReport, TValue>[];
+  data: BookingReport[];
 }
 
-export function DataTable<TData, TValue>({
+export function BookingsTable<TValue>({
   columns,
   data,
-}: DataTableProps<TData, TValue>) {
+}: BookingsTableProps<TValue>) {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
 
   const table = useReactTable({
     data,
     columns,
+    getSubRows: (row) => row.children, 
     getCoreRowModel: getCoreRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
+    getRowCanExpand: (row) => (row.original.children && true)!,
     onColumnVisibilityChange: setColumnVisibility,
     state: {
       columnVisibility,
