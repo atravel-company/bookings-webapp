@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { useReport } from "./hooks/useReport";
 import { columns } from "./reports/columns";
-import { BookingsTable } from "@/components/ui/bookings-table";
+import { BookingsTable } from "@/components/bookings-table";
 import LoadingScreen from "@/pages/loading-screen";
 import { Button } from "@/components/ui/button";
 import { ClockPlus } from "lucide-react";

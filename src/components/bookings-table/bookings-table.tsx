@@ -18,15 +18,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import React from "react";
-import { Button } from "./button";
 import { BookingReport } from "@/types/BookingReport";
+import FiltersAndOptions from "./partials/filters-and-options";
 
 interface BookingsTableProps<TValue> {
   columns: ColumnDef<BookingReport, TValue>[];
@@ -43,7 +37,7 @@ export function BookingsTable<TValue>({
   const table = useReactTable({
     data,
     columns,
-    getSubRows: (row) => row.children, 
+    getSubRows: (row) => row.children,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
     getRowCanExpand: (row) => (row.original.children && true)!,
@@ -55,34 +49,7 @@ export function BookingsTable<TValue>({
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+      <FiltersAndOptions table={table} />
       <div className="rounded-md border overflow-hidden w-full">
         <Table>
           <TableHeader>
