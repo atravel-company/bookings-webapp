@@ -17,7 +17,7 @@ interface DateRangePickerProps extends React.HTMLAttributes<HTMLDivElement> {
   triggerRef?: React.Ref<HTMLButtonElement>
 }
 
-export function DateRangePicker({
+export function PeriodPicker({
   className,
   triggerRef,
 }: DateRangePickerProps) {
