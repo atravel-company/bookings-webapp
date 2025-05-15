@@ -5,6 +5,10 @@ FROM node:22-alpine AS builder
 # Set working directory
 WORKDIR /app
 
+# Application-specific environment variable for build time
+ARG NEXT_PUBLIC_BOOKINGS_API_HOST
+ENV NEXT_PUBLIC_BOOKINGS_API_HOST=${NEXT_PUBLIC_BOOKINGS_API_HOST}
+
 # Copy dependency manifests and install production+dev dependencies
 COPY package*.json ./
 RUN npm ci
@@ -35,10 +39,6 @@ COPY --from=builder /app/.next/static ./.next/static
 EXPOSE 3000
 ENV PORT=3000
 
-# Application-specific environment variable
-# This must be provided at runtime (e.g., via GitHub Actions)
-ARG NEXT_PUBLIC_BOOKINGS_API_HOST
-ENV NEXT_PUBLIC_BOOKINGS_API_HOST=${NEXT_PUBLIC_BOOKINGS_API_HOST}
 
 # Start the server
 CMD ["node", "server.js"]
