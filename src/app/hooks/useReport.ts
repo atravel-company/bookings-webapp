@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { BookingReport } from "@/types/BookingReport";
-
-const endpoint = `${process.env.NEXT_PUBLIC_BOOKINGS_API_URL}/reports`;
-
+import { route } from "@/services/api/routes";
 interface UseBookingReportResult {
   report: BookingReport[] | null;
   loading: boolean;
@@ -17,7 +15,7 @@ export function useReport(): UseBookingReportResult {
   useEffect(() => {
     async function fetchReport() {
       try {
-        const res = await fetch(endpoint);
+        const res = await fetch(route("INDEX_REPORTS"));
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data: BookingReport[] = await res.json();
         setReport(data);
