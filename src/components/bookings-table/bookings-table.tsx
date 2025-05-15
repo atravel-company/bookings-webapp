@@ -13,12 +13,13 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
 
-import React from "react";
+import React, { useMemo } from "react";
 import { BookingReport } from "@/types/BookingReport";
 import FiltersAndOptions from "./partials/filters-and-options";
 
@@ -28,11 +29,39 @@ interface BookingsTableProps<TValue> {
 }
 
 export function BookingsTable<TValue>({
-  columns,
+  columns: userColumns,
   data,
 }: BookingsTableProps<TValue>) {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
+
+    // TODO: should be placed inside columns.tsx
+    //       with proper formatting
+    const columns = useMemo<ColumnDef<BookingReport, TValue>[]>(
+      () =>
+        userColumns.map((col) => ({
+          ...col,
+          footer: (info) => {
+            // Sum over the *actual* column ID that TanStack assigned
+            const total = info.table
+              .getRowModel()
+              .rows.reduce((sum, row) => {
+                const val = row.getValue(info.column.id);
+                return sum + (typeof val === "number"
+                  ? val
+                  : parseFloat(val as string) || 0);
+              }, 0);
+    
+            // Pick your formatting:
+            // • integers show as-is
+            // • floats with two decimals
+            return Number.isInteger(total)
+              ? total
+              : total.toFixed(2);
+          },
+        })),
+      [userColumns]
+    );
 
   const table = useReactTable({
     data,
@@ -98,6 +127,17 @@ export function BookingsTable<TValue>({
               </TableRow>
             )}
           </TableBody>
+          <TableFooter>
+            {table.getFooterGroups().map((fg) => (
+              <TableRow key={fg.id}>
+                {fg.headers.map((header) => (
+                  <TableHead key={header.id}>
+                    {!header.isPlaceholder && flexRender(header.column.columnDef.footer, header.getContext())}
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
+          </TableFooter>
         </Table>
       </div>
     </div>
