@@ -1,0 +1,28 @@
+name: Build & Publish to GHCR
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read    # for checkout
+  packages: write   # to push to GHCR
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build & push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository }}:latest
+          platforms: linux/amd64
+          build-args: |
+            NEXT_PUBLIC_BOOKINGS_API_HOST=${{ secrets.BOOKINGS_API_HOST }}
