@@ -1,60 +1,72 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
-import { cn } from "@/lib/utils"
-import { Calendar } from "@/components/ui/calendar"
-import { addDays, format } from "date-fns"
-import { CalendarIcon } from "lucide-react"
-import * as React from "react"
-import { type DateRange } from "react-day-picker"
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { Calendar } from "@/components/ui/calendar";
+import { addDays, format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import * as React from "react";
+import { type DateRange } from "react-day-picker";
 
-interface DateRangePickerProps extends React.HTMLAttributes<HTMLDivElement> {
-  triggerRef?: React.Ref<HTMLButtonElement>
+interface DateRangePickerProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, "onSelect"> {
+  selected?: DateRange;
+  onSelect: (date?: DateRange) => void;
+  children?: React.ReactNode;
 }
 
 export function PeriodPicker({
-  className,
-  triggerRef,
+  selected,
+  onSelect,
+  children,
 }: DateRangePickerProps) {
   const [date, setDate] = React.useState<DateRange | undefined>({
-    from: addDays(new Date(), -20),
+    from: addDays(new Date(), -30),
     to: new Date(),
-  })
+  });
+
+  function triggerSelection(date: DateRange | undefined) {
+    if (date?.from && date?.to) {
+      setDate(date);
+      onSelect(date);
+    }
+    return;
+  }
 
   return (
-    <div className={cn("grid gap-2", className)}>
+    <div className={cn("grid gap-2")}>
       <Popover>
         <PopoverTrigger asChild>
-          <Button
-            id="date"
-            ref={triggerRef}
-            variant="outline"
-            className={cn(
-              triggerRef
-                ? "sr-only" // Visually hidden but still in the DOM without taking space
-                : "w-[300px] justify-start text-left font-normal",
-              !date && "text-muted-foreground"
-            )}
-          >
-            <CalendarIcon className="mr-2 h-4 w-4" />
-            {date?.from ? (
-              date.to ? (
-                <>
-                  {format(date.from, "LLL dd, y")} -{" "}
-                  {format(date.to, "LLL dd, y")}
-                </>
+          {!children ? (
+            <Button
+              variant="outline"
+              className={cn(
+                "w-[300px] justify-start text-left font-normal",
+                !selected && "text-muted-foreground"
+              )}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {selected?.from ? (
+                selected.to ? (
+                  <>
+                    {format(selected.from, "LLL dd, y")} -{" "}
+                    {format(selected.to, "LLL dd, y")}
+                  </>
+                ) : (
+                  format(selected.from, "LLL dd, y")
+                )
               ) : (
-                format(date.from, "LLL dd, y")
-              )
-            ) : (
-              <span>Pick a date</span>
-            )}
-          </Button>
+                <span>Pick a date</span>
+              )}
+            </Button>
+          ) : (
+            children
+          )}
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
           <Calendar
@@ -62,11 +74,11 @@ export function PeriodPicker({
             mode="range"
             defaultMonth={date?.from}
             selected={date}
-            onSelect={setDate}
+            onSelect={triggerSelection}
             numberOfMonths={2}
           />
         </PopoverContent>
       </Popover>
     </div>
-  )
+  );
 }

@@ -1,23 +1,85 @@
-import { DatePicker, DateRangePicker } from "@/components/date-picker";
+import { DatePicker, PeriodPicker } from "@/components/date-picker";
 import { Button } from "@/components/ui/button";
+import { useForm } from "react-hook-form";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Form, FormField } from "@/components/ui/form";
 import { ClockPlus } from "lucide-react";
-import { useRef } from "react";
+import { cn } from "@/lib/utils";
+import { defaultFilters, usePaymentsFilters } from "../filters";
+
+const FormSchema = z.object({
+  dates: z.union([
+    z.date({
+      required_error: "A date is required.",
+    }),
+    z.object({
+      from: z.date({
+        required_error: "A start date is required.",
+      }),
+      to: z.date({
+        required_error: "An end date is required.",
+      }),
+    }),
+  ]),
+});
 
 export default function DateFilters() {
-  const dateRangePickerTriggerRef = useRef<HTMLButtonElement>(null);
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: defaultFilters,
+  });
+
+  const { setFilters } = usePaymentsFilters();
 
   return (
-    <div className="flex items-center gap-4">
-      <DatePicker />
-      {/* Render the DateRangePicker with a hidden trigger */}
-      <DateRangePicker triggerRef={dateRangePickerTriggerRef} />
-      <Button
-        onClick={() => dateRangePickerTriggerRef.current?.click()}
-        variant="outline"
+    <Form {...form}>
+      <form
+        className="flex items-center gap-4"
+        onSubmit={form.handleSubmit(setFilters)}
       >
-        <ClockPlus />
-        Add Period
-      </Button>
-    </div>
+        <FormField
+          control={form.control}
+          name="dates"
+          render={({ field }) => (
+            <>
+              {/* 
+                  TODO: return to DatePicker when both dates in
+                        PeriodPicker are equal
+
+                  TODO: sync both PeriodPicker selected values
+                        (inline and button)
+              */}
+              {field.value &&
+              typeof field.value === "object" &&
+              "from" in field.value ? (
+                <PeriodPicker
+                  selected={field.value}
+                  onSelect={field.onChange}
+                />
+              ) : (
+                <DatePicker selected={field.value} onSelect={field.onChange} />
+              )}
+              <PeriodPicker
+                selected={
+                  field.value && "from" in field.value ? field.value : undefined
+                }
+                onSelect={field.onChange}
+              >
+                <Button
+                  id="date"
+                  className={cn("justify-start text-left font-normal")}
+                >
+                  <ClockPlus />
+                  Add Period
+                </Button>
+              </PeriodPicker>
+            </>
+          )}
+        />
+        <Button type="submit">Submit</Button>
+      </form>
+    </Form>
   );
 }
