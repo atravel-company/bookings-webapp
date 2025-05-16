@@ -6,6 +6,8 @@ import {
   SortableHeader,
   NumberCell,
   CurrencyCell,
+  CurrencyFooter,
+  SumFooter,
 } from "./cells";
 import type { BookingReport } from "@/types/BookingReport";
 
@@ -48,6 +50,7 @@ const metricsColumns: ColumnDef<BookingReport, number>[] = [
       style: "decimal",
       minimumFractionDigits: 0,
     }),
+    footer: SumFooter<BookingReport, number>(),
   } as ColumnDef<BookingReport, number>;
 });
 
@@ -76,6 +79,7 @@ const totalsColumns: ColumnDef<BookingReport, number | undefined>[] = [
       accessorKey: `totals.${key}` as const,
       header: key[0].toUpperCase() + key.slice(1),
       cell: CurrencyCell<BookingReport>(),
+      footer: CurrencyFooter<BookingReport, number>(),
     } as ColumnDef<BookingReport, number | undefined>)
 );
 
@@ -86,12 +90,14 @@ const otherTotals: ColumnDef<BookingReport, number>[] = [
     accessorKey: "totals.kickback",
     header: "Kickback",
     cell: CurrencyCell<BookingReport>(),
+    footer: CurrencyFooter<BookingReport, number>(),
   },
   {
     id: "Total",
     accessorKey: "totals.sum",
     header: "Total",
     cell: CurrencyCell<BookingReport>(),
+    footer: CurrencyFooter<BookingReport, number>(),
   },
 ];
 

@@ -60,3 +60,49 @@ export function CurrencyCell<TData>(
   _CurrencyCell.displayName = `CurrencyCell`;
   return _CurrencyCell;
 }
+
+/**
+ * Creates a footer renderer that sums up all the cells in a column
+ * and then runs your `formatter` on the final total.
+ */
+export function MakeSumFooter<TData, TValue = unknown>(
+  formatter: (total: number) => string | number
+) {
+  return (info: HeaderContext<TData, TValue>) => {
+    const total = info.table
+      .getRowModel()
+      .rows.reduce((sum, row) => {
+        const val = row.getValue(info.column.id);
+        const n =
+          typeof val === "number"
+            ? val
+            : parseFloat(val as string) || 0;
+        return sum + n;
+      }, 0);
+
+    return formatter(total);
+  };
+}
+
+/**
+ * A “plain” summing footer:
+ * • Integers → rendered as-is
+ * • Floats   → two decimals
+ */
+export function SumFooter<TData, TValue = unknown>() {
+  return MakeSumFooter<TData, TValue>((total) =>
+    Number.isInteger(total) ? total : total.toFixed(2)
+  );
+}
+
+/**
+ * A currency‐style summing footer (EUR, pt-PT locale)
+ */
+export function CurrencyFooter<TData, TValue = unknown>() {
+  return MakeSumFooter<TData, TValue>((total) =>
+    total.toLocaleString("pt-PT", {
+      style: "currency",
+      currency: "EUR",
+    })
+  );
+}
