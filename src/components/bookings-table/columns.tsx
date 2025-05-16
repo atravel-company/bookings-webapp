@@ -46,7 +46,7 @@ const metricsColumns: ColumnDef<BookingReport, number>[] = [
   return {
     id: formattedKey,
     accessorKey: `metrics.${key}` as const,
-    header: formattedKey,
+    header: SortableHeader<BookingReport>(formattedKey),
     cell: NumberCell<BookingReport>({
       style: "decimal",
       minimumFractionDigits: 0,
@@ -59,7 +59,7 @@ const metricsColumns: ColumnDef<BookingReport, number>[] = [
 const adrColumn: ColumnDef<BookingReport, number> = {
   id: "ADR",
   accessorKey: "metrics.adr",
-  header: "ADR",
+  header: SortableHeader<BookingReport>("ADR"),
   cell: NumberCell<BookingReport>({
     style: "currency",
     currency: "EUR",
@@ -67,6 +67,7 @@ const adrColumn: ColumnDef<BookingReport, number> = {
   }),
 };
 
+// TODO: sorting desc is showing n/a as highest
 // 6️⃣ Totals (number | undefined)
 const totalsColumns: ColumnDef<BookingReport, number | undefined>[] = [
   "quarto",
@@ -78,7 +79,9 @@ const totalsColumns: ColumnDef<BookingReport, number | undefined>[] = [
     ({
       id: key,
       accessorKey: `totals.${key}` as const,
-      header: key[0].toUpperCase() + key.slice(1),
+      header: SortableHeader<BookingReport>(
+        key[0].toUpperCase() + key.slice(1)
+      ),
       cell: CurrencyCell<BookingReport>(),
       footer: CurrencyFooter<BookingReport, number>(),
     } as ColumnDef<BookingReport, number | undefined>)
@@ -89,14 +92,14 @@ const otherTotals: ColumnDef<BookingReport, number>[] = [
   {
     id: "Kickback",
     accessorKey: "totals.kickback",
-    header: "Kickback",
+    header: SortableHeader<BookingReport>("Kickback"),
     cell: CurrencyCell<BookingReport>(),
     footer: CurrencyFooter<BookingReport, number>(),
   },
   {
     id: "Total",
     accessorKey: "totals.sum",
-    header: "Total",
+    header: SortableHeader<BookingReport>("Total"),
     cell: CurrencyCell<BookingReport>(),
     footer: CurrencyFooter<BookingReport, number>(),
   },
