@@ -24,7 +24,6 @@ export type PaymentsFiltersContextType = {
 
 export const defaultFilters: PaymentsFiltersState = {
   searchTerm: "",
-  dates: new Date(),
 };
 
 const PaymentsFiltersContext = createContext<
