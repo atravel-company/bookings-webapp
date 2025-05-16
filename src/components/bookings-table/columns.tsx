@@ -1,179 +1,99 @@
-import { Button } from "@/components/ui/button";
-import { BookingReport } from "@/types/BookingReport";
-import { ColumnDef } from "@tanstack/react-table";
-import { parseISO, format } from "date-fns";
-import { ChevronDown, ChevronsUpDown } from "lucide-react";
+// columns.tsx
+import type { ColumnDef } from "@tanstack/react-table";
+import {
+  ExpandCell,
+  DateCell,
+  SortableHeader,
+  NumberCell,
+  CurrencyCell,
+} from "./cells";
+import type { BookingReport } from "@/types/BookingReport";
 
-export const columns: ColumnDef<BookingReport>[] = [
-  {
-    accessorKey: "expand",
-    header: "",
-    cell: ({ row }) => {
-      return (
-        row.getCanExpand() && (
-          <Button
-            size={"icon"}
-            variant={"ghost"}
-            onClick={() => row.toggleExpanded()}
-          >
-            <ChevronDown />
-          </Button>
-        )
-      );
-    },
-  },
-  {
-    accessorKey: "startDate",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          className="font-bold"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Start Date
-          <ChevronsUpDown />
-        </Button>
-      );
-    },
-    cell: ({ getValue }) => {
-      const date = parseISO(getValue() as string);
-      return <div className="w-full text-center">{format(date, "dd/MM/yyyy")}</div>;
-    },
-  },
-  {
-    accessorKey: "clientName",
-    header: "Client",
-  },
-  {
-    accessorKey: "operatorName",
-    header: "Operator",
-  },
-  {
-    accessorKey: "supplierName",
-    header: "Supplier",
-  },
-  {
-    accessorKey: "metrics.rnts",
-    header: "RNTs",
-    cell: ({ getValue }) => {
-      const value = getValue() as number;
-      return value.toLocaleString("pt-PT", {
+// 1️⃣ Expand
+const expandColumn: ColumnDef<BookingReport, unknown> = {
+  accessorKey: "expand",
+  header: "",
+  cell: ExpandCell,
+};
+
+// 2️⃣ Date (string)
+const startDateColumn: ColumnDef<BookingReport, string> = {
+  accessorKey: "startDate",
+  header: SortableHeader<BookingReport>("Start Date"),
+  cell: DateCell<BookingReport>("dd/MM/yyyy"),
+};
+
+// 3️⃣ Text columns are just unknown→string but don’t need a specialized cell
+const textColumns: ColumnDef<BookingReport, string>[] = [
+  { accessorKey: "clientName", header: "Client" },
+  { accessorKey: "operatorName", header: "Operator" },
+  { accessorKey: "supplierName", header: "Supplier" },
+];
+
+// 4️⃣ Metrics (number)
+const metricsColumns: ColumnDef<BookingReport, number>[] = [
+  "rnts",
+  "bednight",
+  "players",
+].map(
+  (key) =>
+    ({
+      accessorKey: `metrics.${key}` as const,
+      header: key[0].toUpperCase() + key.slice(1),
+      cell: NumberCell<BookingReport>({
         style: "decimal",
         minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      });
-    },
-  },
-  {
-    accessorKey: "metrics.bednight",
-    header: "Bednights",
-    cell: ({ getValue }) => {
-      const value = getValue() as number;
-      return value.toLocaleString("pt-PT", {
-        style: "decimal",
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      });
-    },
-  },
-  {
-    accessorKey: "metrics.players",
-    header: "Players",
-    cell: ({ getValue }) => {
-      const value = getValue() as number;
-      return value.toLocaleString("pt-PT", {
-        style: "decimal",
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      });
-    },
-  },
-  {
-    accessorKey: "metrics.adr",
-    header: "ADR",
-    cell: ({ getValue }) => {
-      const value = getValue() as number;
-      return value.toLocaleString("pt-PT", {
-        style: "currency",
-        currency: "EUR",
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      });
-    },
-  },
-  {
-    accessorKey: "totals.quarto",
-    header: "Quarto",
-    cell: ({ getValue }) => {
-      const value = getValue();
-      if (typeof value === "number")
-        return value.toLocaleString("pt-PT", {
-          style: "currency",
-          currency: "EUR",
-        });
-      return "n/a";
-    },
-  },
-  {
-    accessorKey: "totals.golf",
-    header: "Golf",
-    cell: ({ getValue }) => {
-      const value = getValue();
-      if (typeof value === "number")
-        return value.toLocaleString("pt-PT", {
-          style: "currency",
-          currency: "EUR",
-        });
-      return "n/a";
-    },
-  },
-  {
-    accessorKey: "totals.transfer",
-    header: "Transfer",
-    cell: ({ getValue }) => {
-      const value = getValue();
-      if (typeof value === "number")
-        return value.toLocaleString("pt-PT", {
-          style: "currency",
-          currency: "EUR",
-        });
-      return "n/a";
-    },
-  },
-  {
-    accessorKey: "totals.extras",
-    header: "Extras",
-    cell: ({ getValue }) => {
-      const value = getValue();
-      if (typeof value === "number")
-        return value.toLocaleString("pt-PT", {
-          style: "currency",
-          currency: "EUR",
-        });
-      return "n/a";
-    },
-  },
+      }),
+    } as ColumnDef<BookingReport, number>)
+);
+
+// 5️⃣ ADR (number)
+const adrColumn: ColumnDef<BookingReport, number> = {
+  accessorKey: "metrics.adr",
+  header: "ADR",
+  cell: NumberCell<BookingReport>({
+    style: "currency",
+    currency: "EUR",
+    minimumFractionDigits: 2,
+  }),
+};
+
+// 6️⃣ Totals (number | undefined)
+const totalsColumns: ColumnDef<BookingReport, number | undefined>[] = [
+  "quarto",
+  "golf",
+  "transfer",
+  "extras",
+].map(
+  (key) =>
+    ({
+      accessorKey: `totals.${key}` as const,
+      header: key[0].toUpperCase() + key.slice(1),
+      cell: CurrencyCell<BookingReport>(),
+    } as ColumnDef<BookingReport, number | undefined>)
+);
+
+// 7️⃣ Kickback & Sum
+const otherTotals: ColumnDef<BookingReport, number>[] = [
   {
     accessorKey: "totals.kickback",
     header: "Kickback",
-    cell: ({ getValue }) => {
-      const value = getValue() as number;
-      return value.toLocaleString("pt-PT", {
-        style: "currency",
-        currency: "EUR",
-      });
-    },
+    cell: CurrencyCell<BookingReport>(),
   },
   {
     accessorKey: "totals.sum",
     header: "Total",
-    cell: ({ getValue }) => {
-      const value = getValue() as number;
-      return value.toLocaleString("pt-PT", {
-        style: "currency",
-        currency: "EUR",
-      });
-    },
+    cell: CurrencyCell<BookingReport>(),
   },
 ];
+
+// Compose
+export const columns: ColumnDef<BookingReport>[] = [
+  expandColumn,
+  startDateColumn,
+  ...textColumns,
+  ...metricsColumns,
+  adrColumn,
+  ...totalsColumns,
+  ...otherTotals,
+] as ColumnDef<BookingReport, unknown>[];
