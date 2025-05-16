@@ -1,7 +1,7 @@
 "use client";
 
 import { useReport } from "../hooks/useReport";
-import { columns } from "./columns";
+import { columns } from "../../components/bookings-table/columns";
 import { BookingsTable } from "@/components/bookings-table";
 import LoadingScreen from "@/pages/loading-screen";
 import DateFilters from "./partials/date-filters";
