@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { BookingReport } from "@/types/BookingReport";
 import { ColumnDef } from "@tanstack/react-table";
 import { parseISO, format } from "date-fns";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ChevronsUpDown } from "lucide-react";
 
 export const columns: ColumnDef<BookingReport>[] = [
   {
@@ -24,10 +24,21 @@ export const columns: ColumnDef<BookingReport>[] = [
   },
   {
     accessorKey: "startDate",
-    header: "Start Date",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          className="font-bold"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Start Date
+          <ChevronsUpDown />
+        </Button>
+      );
+    },
     cell: ({ getValue }) => {
       const date = parseISO(getValue() as string);
-      return format(date, "dd/MM/yyyy");
+      return <div className="w-full text-center">{format(date, "dd/MM/yyyy")}</div>;
     },
   },
   {

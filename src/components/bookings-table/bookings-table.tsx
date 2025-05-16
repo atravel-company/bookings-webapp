@@ -7,6 +7,8 @@ import {
   VisibilityState,
   useReactTable,
   getExpandedRowModel,
+  getSortedRowModel,
+  SortingState,
 } from "@tanstack/react-table";
 
 import {
@@ -34,6 +36,9 @@ export function BookingsTable<TValue>({
 }: BookingsTableProps<TValue>) {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
+
+  const [sorting, setSorting] = React.useState<SortingState>([])
+
 
     // TODO: should be placed inside columns.tsx
     //       with proper formatting
@@ -71,8 +76,11 @@ export function BookingsTable<TValue>({
     getExpandedRowModel: getExpandedRowModel(),
     getRowCanExpand: (row) => (row.original.children && true)!,
     onColumnVisibilityChange: setColumnVisibility,
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
     state: {
       columnVisibility,
+      sorting
     },
   });
 
