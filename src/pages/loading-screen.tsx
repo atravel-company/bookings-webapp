@@ -1,6 +1,6 @@
 export default function LoadingScreen() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+    <div className="w-full flex flex-col items-center justify-center min-h-screen bg-gray-50">
       <svg
         className="animate-spin h-10 w-10 text-blue-500"
         viewBox="0 0 50 50"

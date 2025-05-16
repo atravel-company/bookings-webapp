@@ -1,3 +1,4 @@
+"use client";
 import { DatePicker, PeriodPicker } from "@/components/date-picker";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";

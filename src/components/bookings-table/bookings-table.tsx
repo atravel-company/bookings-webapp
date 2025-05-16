@@ -21,52 +21,25 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import React, { useMemo } from "react";
+import React, { use } from "react";
 import { BookingReport } from "@/types/BookingReport";
 import FiltersAndOptions from "./partials/filters-and-options";
+import { useReport } from "@/app/payments/report-context";
 
 interface BookingsTableProps<TValue> {
   columns: ColumnDef<BookingReport, TValue>[];
-  data: BookingReport[];
 }
 
 export function BookingsTable<TValue>({
-  columns: userColumns,
-  data,
+  columns,
 }: BookingsTableProps<TValue>) {
+  const {reportPromise} = useReport()
+  const data = use(reportPromise)
+
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
 
   const [sorting, setSorting] = React.useState<SortingState>([])
-
-
-    // TODO: should be placed inside columns.tsx
-    //       with proper formatting
-    const columns = useMemo<ColumnDef<BookingReport, TValue>[]>(
-      () =>
-        userColumns.map((col) => ({
-          ...col,
-          footer: (info) => {
-            // Sum over the *actual* column ID that TanStack assigned
-            const total = info.table
-              .getRowModel()
-              .rows.reduce((sum, row) => {
-                const val = row.getValue(info.column.id);
-                return sum + (typeof val === "number"
-                  ? val
-                  : parseFloat(val as string) || 0);
-              }, 0);
-    
-            // Pick your formatting:
-            // • integers show as-is
-            // • floats with two decimals
-            return Number.isInteger(total)
-              ? total
-              : total.toFixed(2);
-          },
-        })),
-      [userColumns]
-    );
 
   const table = useReactTable({
     data,

@@ -1,3 +1,4 @@
+"use client";
 import { route } from "@/services/api/routes";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
