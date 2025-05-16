@@ -8,6 +8,7 @@ import {
   CurrencyCell,
   CurrencyFooter,
   SumFooter,
+  SettingsHeader,
 } from "./cells";
 import type { BookingReport } from "@/types/BookingReport";
 
@@ -15,7 +16,7 @@ import type { BookingReport } from "@/types/BookingReport";
 const expandColumn: ColumnDef<BookingReport, unknown> = {
   enableHiding: false,
   accessorKey: "expand",
-  header: "",
+  header: SettingsHeader<BookingReport>(),
   cell: ExpandCell,
 };
 

@@ -7,6 +7,7 @@ import { BookingReport } from "@/types/BookingReport";
 import { Suspense } from "react";
 import { ReportProvider } from "./report-context";
 import LoadingScreen from "@/pages/loading-screen";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 type SearchParams = { [key: string]: string | number | boolean | string[] };
 
@@ -27,18 +28,22 @@ export default function Payments({
   return (
     <ReportProvider reportPromise={dataPromise}>
       <PaymentsFiltersProvider>
-        <div className="flex flex-col min-h-screen p-8 pb-20 gap-16 sm:p-16 font-[family-name:var(--font-inter)]">
+        <div className="flex flex-col h-screen p-8 !pb-0 gap-8 sm:p-16 font-[family-name:var(--font-inter)]">
           <header className="flex justify-between items-center gap-4">
             <h1 className="text-4xl sm:text-5xl font-bold tracking-[-.01em] text-center sm:text-left">
               Payments
             </h1>
             <DateFilters />
           </header>
-          <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
+          <ScrollArea
+            className="rounded-t-xl border flex-1 overflow-auto"
+            style={{ scrollbarWidth: "none" }}
+          >
             <Suspense fallback={<LoadingScreen />}>
               <BookingsTable columns={columns} />
             </Suspense>
-          </main>
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
         </div>
       </PaymentsFiltersProvider>
     </ReportProvider>
