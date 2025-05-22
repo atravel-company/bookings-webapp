@@ -1,7 +1,7 @@
 import { parseISO, format } from "date-fns";
 import { CellContext, HeaderContext } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronsUpDown, Settings2 } from "lucide-react";
+import { ChevronDown, Settings2 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -13,7 +13,7 @@ import {
 
 export function ExpandCell<TData>({ row }: CellContext<TData, unknown>) {
   return row.getCanExpand() ? (
-    <Button size="icon" variant="ghost" onClick={() => row.toggleExpanded()}>
+    <Button size="icon" variant="ghost" className="w-6 h-6 rounded-full" onClick={() => row.toggleExpanded()}>
       <ChevronDown />
     </Button>
   ) : null;
@@ -36,8 +36,8 @@ export function SettingsHeader<TData>() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
-            className="rounded-full"
-            variant="secondary"
+            className="rounded-full w-6 h-6"
+            variant="ghost"
             size="icon"
             aria-label="Columns"
           >
@@ -73,11 +73,10 @@ export function SortableHeader<TData>(title: string) {
     return (
       <Button
         variant="ghost"
-        className="font-bold"
+        className="px-0 w-full font-bold hover:cursor-pointer text-[length:inherit]"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
         {title}
-        <ChevronsUpDown />
       </Button>
     );
   }
@@ -85,26 +84,46 @@ export function SortableHeader<TData>(title: string) {
   return _SortableHeader;
 }
 
-export function NumberCell<TData>(opts: Intl.NumberFormatOptions) {
-  function _NumberCell({ getValue }: CellContext<TData, number>) {
-    return getValue().toLocaleString("pt-PT", opts);
+type AlignOptions = 'left' | 'center' | 'right';
+
+interface NumberCellOptions extends Intl.NumberFormatOptions {
+  align?: AlignOptions;
+}
+
+export function NumberCell<TData>({ align = 'center', ...opts }: NumberCellOptions) {
+  function _NumberCell({ getValue }: CellContext<TData, number | undefined>) {
+    const v = getValue();
+    // Only format real numbers; otherwise show "n/a"
+    const content =
+      typeof v === 'number'
+        ? v.toLocaleString('pt-PT', opts)
+        : 'n/a';
+
+    return (
+      <div style={{ textAlign: align, width: '100%' }}>
+        {content}
+      </div>
+    );
   }
-  _NumberCell.displayName = `NumberCell(${JSON.stringify(opts)})`;
+  _NumberCell.displayName = `NumberCell(${JSON.stringify({ ...opts, align })})`;
   return _NumberCell;
 }
 
+
 export function CurrencyCell<TData>(
-  opts: Intl.NumberFormatOptions = {
+  formatOpts: Intl.NumberFormatOptions = {
     style: "currency",
     currency: "EUR",
-  }
+  },
+  align: AlignOptions = "right"
 ) {
-  function _CurrencyCell({ getValue }: CellContext<TData, number | undefined>) {
-    const v = getValue();
-    return typeof v === "number" ? v.toLocaleString("pt-PT", opts) : "n/a";
-  }
-  _CurrencyCell.displayName = `CurrencyCell`;
-  return _CurrencyCell;
+  // Force style: currency, but allow overriding currency code via formatOpts
+  return NumberCell<TData>({
+    style: "currency",
+    currency: formatOpts.currency,
+    ...formatOpts,
+    align,
+  });
 }
 
 /**
@@ -115,11 +134,14 @@ export function MakeSumFooter<TData, TValue = unknown>(
   formatter: (total: number) => string | number
 ) {
   return (info: HeaderContext<TData, TValue>) => {
-    const total = info.table.getRowModel().rows.reduce((sum, row) => {
-      const val = row.getValue(info.column.id);
-      const n = typeof val === "number" ? val : parseFloat(val as string) || 0;
-      return sum + n;
-    }, 0);
+    const total = info.table
+      .getRowModel()
+      .rows.reduce((sum, row) => {
+        const val = row.getValue(info.column.id);
+        const n =
+          typeof val === 'number' ? val : parseFloat(val as string) || 0;
+        return sum + n;
+      }, 0);
 
     return formatter(total);
   };
@@ -129,21 +151,50 @@ export function MakeSumFooter<TData, TValue = unknown>(
  * A “plain” summing footer:
  * • Integers → rendered as-is
  * • Floats   → two decimals
+ *
+ * @param align  How to align the footer cell (default: "center")
  */
-export function SumFooter<TData, TValue = unknown>() {
-  return MakeSumFooter<TData, TValue>((total) =>
+export function SumFooter<TData, TValue = unknown>(
+  align: AlignOptions = 'center'
+) {
+  const rawFooter = MakeSumFooter<TData, TValue>((total) =>
     Number.isInteger(total) ? total : total.toFixed(2)
   );
+
+  function _SumFooter(info: HeaderContext<TData, TValue>) {
+    return (
+      <div style={{ textAlign: align, width: '100%' }}>
+        {rawFooter(info)}
+      </div>
+    );
+  }
+  _SumFooter.displayName = `SumFooter(align="${align}")`;
+  return _SumFooter;
 }
 
 /**
- * A currency‐style summing footer (EUR, pt-PT locale)
+ * A currency‐style summing footer (EUR, pt-PT locale),
+ * aligned right by default.
+ *
+ * @param align  How to align the footer cell (default: "right")
  */
-export function CurrencyFooter<TData, TValue = unknown>() {
-  return MakeSumFooter<TData, TValue>((total) =>
-    total.toLocaleString("pt-PT", {
-      style: "currency",
-      currency: "EUR",
+export function CurrencyFooter<TData, TValue = unknown>(
+  align: AlignOptions = 'right'
+) {
+  const rawFooter = MakeSumFooter<TData, TValue>((total) =>
+    total.toLocaleString('pt-PT', {
+      style: 'currency',
+      currency: 'EUR',
     })
   );
+
+  function _CurrencyFooter(info: HeaderContext<TData, TValue>) {
+    return (
+      <div style={{ textAlign: align, width: '100%' }}>
+        {rawFooter(info)}
+      </div>
+    );
+  }
+  _CurrencyFooter.displayName = `CurrencyFooter(align="${align}")`;
+  return _CurrencyFooter;
 }
