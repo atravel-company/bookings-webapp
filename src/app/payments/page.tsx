@@ -2,7 +2,7 @@ import { columns } from "../../components/bookings-table/columns";
 import { BookingsTable } from "@/components/bookings-table";
 import DateFilters from "./partials/date-filters";
 import { PaymentsFiltersProvider } from "./filters";
-import { route } from "@/services/api/routes";
+import { route } from "@/lib/routes";
 import { BookingReport } from "@/types/BookingReport";
 import { Suspense } from "react";
 import { ReportProvider } from "./report-context";
