@@ -21,18 +21,18 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import React, { use } from "react";
-import { BookingReport } from "@/types/BookingReport";
-import { useReport } from "@/app/payments/report-context";
+import React from "react";
+import { ServicesSummary } from "@/app/api/services/summaries/types";
 
 interface BookingsTableProps<TValue> {
-  columns: ColumnDef<BookingReport, TValue>[];
+  data: ServicesSummary[];
+  columns: ColumnDef<ServicesSummary, TValue>[];
 }
 
-export function BookingsTable<TValue>({ columns }: BookingsTableProps<TValue>) {
-  const { reportPromise } = useReport();
-  const data = use(reportPromise);
-
+export function BookingsTable<TValue>({
+  data,
+  columns,
+}: BookingsTableProps<TValue>) {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
 
