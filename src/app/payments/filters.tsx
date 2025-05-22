@@ -1,5 +1,5 @@
 "use client";
-import { route } from "@/lib/routes";
+import { appRoute } from "@/lib/routes-provider";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import React, {
@@ -65,7 +65,7 @@ export const PaymentsFiltersProvider = ({
     };
 
     const param = getDateParam(filters.dates);
-    if (param) router.push(route("LIST_PAYMENTS", { dates: param }, false));
+    if (param) router.push(appRoute("LIST_PAYMENTS", { dates: param }));
   }, [filters, router]);
 
   return (
