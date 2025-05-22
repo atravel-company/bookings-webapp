@@ -1,3 +1,4 @@
+"use client";
 import { route } from "@/services/api/routes";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
@@ -23,7 +24,6 @@ export type PaymentsFiltersContextType = {
 
 export const defaultFilters: PaymentsFiltersState = {
   searchTerm: "",
-  dates: new Date(),
 };
 
 const PaymentsFiltersContext = createContext<

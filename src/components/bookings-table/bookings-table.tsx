@@ -7,6 +7,8 @@ import {
   VisibilityState,
   useReactTable,
   getExpandedRowModel,
+  getSortedRowModel,
+  SortingState,
 } from "@tanstack/react-table";
 
 import {
@@ -19,49 +21,22 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import React, { useMemo } from "react";
+import React, { use } from "react";
 import { BookingReport } from "@/types/BookingReport";
-import FiltersAndOptions from "./partials/filters-and-options";
+import { useReport } from "@/app/payments/report-context";
 
 interface BookingsTableProps<TValue> {
   columns: ColumnDef<BookingReport, TValue>[];
-  data: BookingReport[];
 }
 
-export function BookingsTable<TValue>({
-  columns: userColumns,
-  data,
-}: BookingsTableProps<TValue>) {
+export function BookingsTable<TValue>({ columns }: BookingsTableProps<TValue>) {
+  const { reportPromise } = useReport();
+  const data = use(reportPromise);
+
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
 
-    // TODO: should be placed inside columns.tsx
-    //       with proper formatting
-    const columns = useMemo<ColumnDef<BookingReport, TValue>[]>(
-      () =>
-        userColumns.map((col) => ({
-          ...col,
-          footer: (info) => {
-            // Sum over the *actual* column ID that TanStack assigned
-            const total = info.table
-              .getRowModel()
-              .rows.reduce((sum, row) => {
-                const val = row.getValue(info.column.id);
-                return sum + (typeof val === "number"
-                  ? val
-                  : parseFloat(val as string) || 0);
-              }, 0);
-    
-            // Pick your formatting:
-            // • integers show as-is
-            // • floats with two decimals
-            return Number.isInteger(total)
-              ? total
-              : total.toFixed(2);
-          },
-        })),
-      [userColumns]
-    );
+  const [sorting, setSorting] = React.useState<SortingState>([]);
 
   const table = useReactTable({
     data,
@@ -71,75 +46,74 @@ export function BookingsTable<TValue>({
     getExpandedRowModel: getExpandedRowModel(),
     getRowCanExpand: (row) => (row.original.children && true)!,
     onColumnVisibilityChange: setColumnVisibility,
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
     state: {
       columnVisibility,
+      sorting,
     },
   });
 
   return (
-    <div className="w-full">
-      <FiltersAndOptions table={table} />
-      <div className="rounded-md border overflow-hidden w-full">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead className="font-bold" key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
+    <Table className="relative w-full overflow-x-auto">
+      <TableHeader>
+        {table.getHeaderGroups().map((headerGroup) => (
+          <TableRow key={headerGroup.id}>
+            {headerGroup.headers.map((header) => {
+              return (
+                <TableHead className="font-bold first:pr-0" key={header.id}>
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
                       )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
+                </TableHead>
+              );
+            })}
+          </TableRow>
+        ))}
+      </TableHeader>
+      <TableBody>
+        {table.getRowModel().rows?.length ? (
+          table.getRowModel().rows.map((row) => (
+            <TableRow
+              key={row.id}
+              data-state={
+                (row.getIsSelected() && "selected") ||
+                (row.getIsExpanded() && "expanded")
+              }
+            >
+              {row.getVisibleCells().map((cell) => (
+                <TableCell key={cell.id} className="first:pr-0">
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-          <TableFooter>
-            {table.getFooterGroups().map((fg) => (
-              <TableRow key={fg.id}>
-                {fg.headers.map((header) => (
-                  <TableHead key={header.id}>
-                    {!header.isPlaceholder && flexRender(header.column.columnDef.footer, header.getContext())}
-                  </TableHead>
-                ))}
-              </TableRow>
+              ))}
+            </TableRow>
+          ))
+        ) : (
+          <TableRow>
+            <TableCell colSpan={columns.length} className="h-24 text-center">
+              No results.
+            </TableCell>
+          </TableRow>
+        )}
+      </TableBody>
+      <TableFooter className="sticky bottom-0">
+        {table.getFooterGroups().map((fg) => (
+          <TableRow key={fg.id}>
+            {fg.headers.map((header) => (
+              <TableHead key={header.id}>
+                {!header.isPlaceholder &&
+                  flexRender(
+                    header.column.columnDef.footer,
+                    header.getContext()
+                  )}
+              </TableHead>
             ))}
-          </TableFooter>
-        </Table>
-      </div>
-    </div>
+          </TableRow>
+        ))}
+      </TableFooter>
+    </Table>
   );
 }

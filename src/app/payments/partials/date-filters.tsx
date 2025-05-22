@@ -1,3 +1,4 @@
+"use client";
 import { DatePicker, PeriodPicker } from "@/components/date-picker";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
@@ -5,9 +6,15 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Form, FormField } from "@/components/ui/form";
-import { ClockPlus } from "lucide-react";
+import { ClockPlus, Share } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { defaultFilters, usePaymentsFilters } from "../filters";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
 
 const FormSchema = z.object({
   dates: z.union([
@@ -78,6 +85,18 @@ export default function DateFilters() {
             </>
           )}
         />
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button>
+              <Share />
+              Export
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start">
+            <DropdownMenuItem>Microsoft Excel (.xlsx)</DropdownMenuItem>
+            <DropdownMenuItem>Link</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
         <Button type="submit">Submit</Button>
       </form>
     </Form>

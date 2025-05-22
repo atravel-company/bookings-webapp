@@ -4,6 +4,18 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --color-scooter-50: #ebffff;
+  --color-scooter-100: #cefeff;
+  --color-scooter-200: #a2faff;
+  --color-scooter-300: #63f4fd;
+  --color-scooter-400: #1ce4f4;
+  --color-scooter-500: #00bed0;
+  --color-scooter-600: #039fb7;
+  --color-scooter-700: #0a7e94;
+  --color-scooter-800: #126578;
+  --color-scooter-900: #145465;
+  --color-scooter-950: #063846;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-sidebar-ring: var(--sidebar-ring);
