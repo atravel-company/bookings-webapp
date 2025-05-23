@@ -1,0 +1,5 @@
+{
+  "MOCK_SERVICES_SUMMARIES": "/api/services/summaries/mock",
+  "SERVICES_SUMMARIES": "/api/services/summaries",
+  "LIST_PAYMENTS": "/payments"
+}
